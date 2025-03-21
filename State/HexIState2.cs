@@ -9,10 +9,17 @@ public class HexIState2 : AHexIState
 
     public override void OnStateOn()
     {
-        HexagonMapDrawing.OnScored?.Invoke(1);
+        HexagonMain.OnScored?.Invoke(1);
+        gameObject.SetActive(true);
+        gameObject.transform.localScale = Vector3.one;
+        if (HexagonMain.IsEnd)
+        {
+
+            return;
+        }
         if(Data.targets.Length == 0)
         {
-            HexagonMapDrawing.OnEnd?.Invoke();
+            HexagonMain.OnEnd?.Invoke();
         }
         foreach (var e in Data.targets)
         {

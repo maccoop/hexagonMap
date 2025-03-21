@@ -50,29 +50,6 @@ public class HexagonItem : MonoBehaviour
     }
 }
 
-[CustomEditor(typeof(HexagonItem))]
-public class HexagonItemEditor : Editor
-{
-    HexagonItem script => (HexagonItem)target;
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-
-    }
-
-    private void OnSceneGUI()
-    {
-        Handles.color = Color.green;
-        foreach (var e in script.targets)
-        {
-            if (e != null)
-            {
-                Handles.DrawLine(script.transform.position, e.transform.position);
-            }
-        }
-    }
-}
-
 public abstract class AHexIState : MonoBehaviour, IHexIState
 {
     private HexagonItem _data;

@@ -15,8 +15,8 @@ public class HexIState1 : AHexIState, IPointer
 
     public override void OnStateOff()
     {
-        gameObject.transform.localScale = Vector3.one;
         anim.Kill();
+        gameObject.transform.localScale = Vector3.one;
     }
 
     public override void OnStateOn()
