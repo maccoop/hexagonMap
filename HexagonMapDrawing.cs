@@ -88,4 +88,5 @@ public class HexagonMapDrawing : MonoBehaviour
 public enum HexagonType
 {
     FlatTop, PointTop
+
 }
