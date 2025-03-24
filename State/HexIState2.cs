@@ -2,9 +2,16 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HexIState2 : AHexIState
+public class HexIState2 : AHexIState, IPointer
 {
     private GameObject effect;
+
+    public bool IsEnableClick { get; private set; }
+
+    public void Click()
+    {
+        HexagonMain.Instance.Current = Data;
+    }
 
     public override void OnStateOff()
     {
@@ -30,6 +37,7 @@ public class HexIState2 : AHexIState
                 e.State = HexagonItem.EState.Selection;
         }
         HexagonMain.Instance.Current = Data;
+        IsEnableClick = true;
     }
 
     public override void Reset()
