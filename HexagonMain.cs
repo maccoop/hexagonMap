@@ -7,11 +7,29 @@ using UnityEngine.Events;
 public class HexagonMain : MonoBehaviour
 {
     const string SAVE_IDMAP = "ID_MAP";
+    private const string SCORE = "score";
+    private const string POSITION = "position";
+    private const string TARGET = "target";
+
+    public static HexagonMain Instance { get; set; }
+    public HexagonItem Current
+    {
+        get
+        {
+            return this.current;
+        }
+        set
+        {
+            this.current = value;
+            OnChangePosition();
+        }
+    }
     public static bool IsEnd { get; internal set; }
     public static UnityAction<int> OnScored;
     public static UnityAction OnEnd;
 
     public GameObject prefab;
+    public HexagonCharacterController characterPrefab;
     public TMPro.TMP_Text detail;
 
     int idMap;
@@ -22,9 +40,18 @@ public class HexagonMain : MonoBehaviour
     private INIParser data;
     private int childCount;
     private int idStart;
+    private HexagonCharacterController character;
+    private HexagonItem current;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
+        OnScored += OnEventScored;
+        OnEnd += OnStageEnd;
         GenMap();
         Reset();
     }
@@ -37,7 +64,7 @@ public class HexagonMain : MonoBehaviour
         if (win)
         {
             PlayerPrefs.SetInt("id", idMap++);
-            transform.DOScaleZ(2, 0.5f).OnComplete(() =>
+            transform.DOScaleZ(1, 0.5f).OnComplete(() =>
             {
                 if (win)
                 {
@@ -55,7 +82,7 @@ public class HexagonMain : MonoBehaviour
     {
         crrscore += value;
         detail.text = $"{crrscore}/{targetScore}";
-        if(crrscore < 0)
+        if (crrscore < 0)
         {
             OnStageEnd();
         }
@@ -71,8 +98,23 @@ public class HexagonMain : MonoBehaviour
             e.State = HexagonItem.EState.Hidden;
         }
         itemStart.State = HexagonItem.EState.Selection;
-        OnScored += OnEventScored;
-        OnEnd += OnStageEnd;
+        Destroy(character.gameObject);
+        character = null;
+    }
+
+    void OnChangePosition()
+    {
+        if (character == null)
+        {
+            character = Instantiate(characterPrefab, null);
+            character.SetState(HexagonCharacterController.State.Born);
+            character.transform.position = current.transform.position;
+        }
+        else
+        {
+            character.SetState(HexagonCharacterController.State.Move);
+            character.SetTarget(current.transform.position);
+        }
     }
 
     private void GenMap()
@@ -92,9 +134,10 @@ public class HexagonMain : MonoBehaviour
         for (int i = 0; i < childCount; i++)
         {
             var obj = Instantiate(prefab, transform);
-            obj.transform.position = data.ReadValue(i.ToString(), "position", Vector3.zero);
+            obj.transform.position = data.ReadValue(i.ToString(), POSITION, Vector3.zero);
             var script = obj.GetComponent<HexagonItem>();
             script.State = HexagonItem.EState.Hidden;
+            script.score = data.ReadValue(i.ToString(), SCORE, 0);
             childs.Add(script);
         }
 
@@ -103,7 +146,7 @@ public class HexagonMain : MonoBehaviour
         for (int i = 0; i < childs.Count; i++)
         {
             result = new();
-            string[] ids = data.ReadValue(i.ToString(), "target", "").Split(",");
+            string[] ids = data.ReadValue(i.ToString(), TARGET, "").Split(",");
             if (ids.Length == 0)
                 continue;
             foreach (var id in ids)

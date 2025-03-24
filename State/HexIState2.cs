@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class HexIState2 : AHexIState
 {
+    private GameObject effect;
+
     public override void OnStateOff()
     {
     }
@@ -16,10 +18,9 @@ public class HexIState2 : AHexIState
         gameObject.transform.localScale = Vector3.one;
         if (HexagonMain.IsEnd)
         {
-
             return;
         }
-        if(Data.targets.Length == 0)
+        if (Data.targets.Length == 0)
         {
             HexagonMain.OnEnd?.Invoke();
         }
@@ -28,12 +29,28 @@ public class HexIState2 : AHexIState
             if (e.State == HexagonItem.EState.Hidden)
                 e.State = HexagonItem.EState.Selection;
         }
+        HexagonMain.Instance.Current = Data;
+    }
+
+    public override void Reset()
+    {
+        effect?.gameObject.SetActive(false);
     }
 
     private void GenEffect(int score, Vector3 position)
     {
-        var prefab = Resources.Load<GameObject>($"Effect/eff{score}");
-        var obj = Instantiate(prefab, transform);
-        obj.transform.position = position;
+        if (effect == null)
+        {
+            var prefab = Resources.Load<GameObject>($"Effect/effect{score}");
+            if (prefab == null)
+                return;
+            effect = Instantiate(prefab, transform);
+            var direct = (position - HexagonMain.Instance.Current.transform.position).normalized;
+            effect.transform.position = position + direct * 0.2f;
+        }
+        Vector3 direction = HexagonMain.Instance.Current.transform.position - effect.transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        effect.transform.rotation = Quaternion.Euler(0, 0, angle);
+        effect?.gameObject.SetActive(true);
     }
 }

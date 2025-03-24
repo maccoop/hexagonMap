@@ -10,4 +10,8 @@ public class HexIState0 : MonoBehaviour, IHexIState
     {
         gameObject.SetActive(false);
     }
+
+    public void Reset()
+    {
+    }
 }

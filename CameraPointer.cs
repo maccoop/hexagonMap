@@ -6,10 +6,19 @@ public interface IPointer
     void Click();
 }
 
+[System.Serializable]
+public enum View
+{
+    E2D, E3D
+}
+
 public class CameraPointer : MonoBehaviour
 {
+    public View cameraView;
     Vector2 mousePosition;
     bool hasInput;
+    Ray ray;
+    RaycastHit hitcollider3D;
     RaycastHit2D hitcollider;
     IPointer pointer;
 
@@ -26,14 +35,29 @@ public class CameraPointer : MonoBehaviour
             {
                 mousePosition = Input.mousePosition;
             }
-            mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            hitcollider = Physics2D.Raycast(mousePosition, transform.forward);
-            if (hitcollider.collider != null)
+            if (cameraView == View.E2D)
             {
-                pointer = hitcollider.collider.gameObject.GetComponent<IPointer>();
-                if (pointer != null && pointer.IsEnableClick)
+                mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                hitcollider = Physics2D.Raycast(mousePosition, transform.forward);
+                if (hitcollider.collider != null)
                 {
-                    pointer.Click();
+                    pointer = hitcollider.collider.gameObject.GetComponent<IPointer>();
+                    if (pointer != null && pointer.IsEnableClick)
+                    {
+                        pointer.Click();
+                    }
+                }
+            }
+            else
+            {
+                ray = Camera.main.ScreenPointToRay(mousePosition);
+                if(Physics.Raycast(ray, out hitcollider3D))
+                {
+                    pointer = hitcollider3D.collider.gameObject.GetComponent<IPointer>();
+                    if (pointer != null && pointer.IsEnableClick)
+                    {
+                        pointer.Click();
+                    }
                 }
             }
         }
