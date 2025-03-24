@@ -60,6 +60,7 @@ public class HexagonMapEditor : Editor
         {
             line += $"[{i}]" + enter;
             line += $"position={script.childs[i].transform.position}" + enter;
+            line += $"score={script.childs[i].score}" + enter;
             line += "target=";
             foreach (var e in script.childs[i].targets)
             {

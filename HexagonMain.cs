@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class HexagonMain : MonoBehaviour
 {
+    const string SAVE_IDMAP = "ID_MAP";
     public static bool IsEnd { get; internal set; }
     public static UnityAction<int> OnScored;
     public static UnityAction OnEnd;
@@ -54,6 +55,10 @@ public class HexagonMain : MonoBehaviour
     {
         crrscore += value;
         detail.text = $"{crrscore}/{targetScore}";
+        if(crrscore < 0)
+        {
+            OnStageEnd();
+        }
     }
 
     public void Reset()
@@ -73,7 +78,7 @@ public class HexagonMain : MonoBehaviour
 
     private void GenMap()
     {
-        idMap = PlayerPrefs.GetInt("id", 0);
+        idMap = PlayerPrefs.GetInt(SAVE_IDMAP, 0);
         var asset = Resources.Load<TextAsset>($"MapData/map_{idMap}");
         data = new INIParser();
         data.Open(asset);
@@ -82,7 +87,7 @@ public class HexagonMain : MonoBehaviour
         idStart = data.ReadValue("MAP", "itemStart", 0);
         if (childCount == 0)
         {
-            throw new NullReferenceException("MAP/childCount");
+            throw new NullReferenceException($"id map {idMap}");
         }
         for (int i = 0; i < childCount; i++)
         {

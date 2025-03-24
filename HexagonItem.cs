@@ -9,6 +9,7 @@ public class HexagonItem : MonoBehaviour
 {
     private IHexIState[] states;
     private EState _state;
+    public int score;
     public HexagonItem[] targets;
 
     private void Awake()
