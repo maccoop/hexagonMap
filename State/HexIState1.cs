@@ -21,12 +21,14 @@ public class HexIState1 : AHexIState, IPointer
 
     public override void OnStateOn()
     {
+        GetComponent<Collider2D>().enabled = false;
         gameObject.SetActive(true);
         transform.localScale = Vector3.zero;
         anim?.Kill();
         transform.DOScale(1, 0.5f).SetEase(Ease.InOutSine).SetDelay(0.2f).OnComplete(() =>
         {
             anim = transform.DOScale(0.9f, 0.4f).SetLoops(-1, LoopType.Yoyo);
+            GetComponent<Collider2D>().enabled = true;
         });
         OnSelected += OnOtherSelect;
     }

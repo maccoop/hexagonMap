@@ -63,7 +63,6 @@ public class HexagonMain : MonoBehaviour
 
     public void Reset()
     {
-        itemStart.State = HexagonItem.EState.Selection;
         crrscore = 0;
         detail.text = $"{crrscore}/{targetScore}";
         IsEnd = false;
@@ -89,10 +88,34 @@ public class HexagonMain : MonoBehaviour
         {
             throw new NullReferenceException($"id map {idMap}");
         }
+        childs = new List<HexagonItem>();
         for (int i = 0; i < childCount; i++)
         {
             var obj = Instantiate(prefab, transform);
             obj.transform.position = data.ReadValue(i.ToString(), "position", Vector3.zero);
+            var script = obj.GetComponent<HexagonItem>();
+            script.State = HexagonItem.EState.Hidden;
+            childs.Add(script);
+        }
+
+        List<HexagonItem> result = new();
+        int cid = 0;
+        for (int i = 0; i < childs.Count; i++)
+        {
+            result = new();
+            string[] ids = data.ReadValue(i.ToString(), "target", "").Split(",");
+            if (ids.Length == 0)
+                continue;
+            foreach (var id in ids)
+            {
+                if (id != null && id.Length != 0)
+                {
+                    cid = int.Parse(id);
+                    result.Add(childs[cid]);
+                }
+            }
+            childs[i].targets = result.ToArray();
+            itemStart = childs[data.ReadValue("MAP", "itemStart", 0)];
         }
     }
 }
