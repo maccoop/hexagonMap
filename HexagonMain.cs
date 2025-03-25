@@ -158,7 +158,7 @@ public class HexagonMain : MonoBehaviour
                 }
             }
             childs[i].targets = result.ToArray();
-            itemStart = childs[data.ReadValue("MAP", "itemStart", 0)];
+            itemStart = childs[idStart];
         }
     }
 }
