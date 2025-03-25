@@ -1,4 +1,6 @@
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using System;
 using UnityEngine;
 
@@ -20,6 +22,7 @@ public class HexagonCharacterController : MonoBehaviour
     }
 
     bool isHurt = false;
+    private TweenerCore<Vector3, Vector3, VectorOptions> tweenMove;
 
     private void OnScored(int score)
     {
@@ -35,7 +38,13 @@ public class HexagonCharacterController : MonoBehaviour
             case State.Born:
             case State.React:
                 {
+                    CancelInvoke();
                     Invoke("SetStateIdle", 1.5f);
+                    break;
+                }
+            default:
+                {
+                    CancelInvoke();
                     break;
                 }
         }
@@ -49,7 +58,8 @@ public class HexagonCharacterController : MonoBehaviour
 
     public void SetTarget(Vector3 worldPosition)
     {
-        transform.DOMove(worldPosition, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        tweenMove.Kill();
+        tweenMove = transform.DOMove(worldPosition, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
         {
             if (isHurt)
             {

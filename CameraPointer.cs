@@ -53,10 +53,12 @@ public class CameraPointer : MonoBehaviour
                 ray = Camera.main.ScreenPointToRay(mousePosition);
                 if(Physics.Raycast(ray, out hitcollider3D))
                 {
-                    pointer = hitcollider3D.collider.gameObject.GetComponent<IPointer>();
-                    if (pointer != null && pointer.IsEnableClick)
-                    {
-                        pointer.Click();
+                    var pointers = hitcollider3D.collider.gameObject.GetComponents<IPointer>();
+                    foreach (var pointer in pointers) {
+                        if (pointer != null && pointer.IsEnableClick)
+                        {
+                            pointer.Click();
+                        }
                     }
                 }
             }

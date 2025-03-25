@@ -98,11 +98,12 @@ public class HexagonMain : MonoBehaviour
             e.State = HexagonItem.EState.Hidden;
         }
         itemStart.State = HexagonItem.EState.Selection;
-        Destroy(character.gameObject);
+        if (character != null)
+            Destroy(character.gameObject);
         character = null;
     }
 
-    void OnChangePosition()
+    public void OnChangePosition()
     {
         if (character == null)
         {
