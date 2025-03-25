@@ -17,17 +17,16 @@ public class HexagonMapDrawing : MonoBehaviour
     public HexagonItem itemStart; // item bắt đầu game
     public int gridWidth = 5;     // Số ô theo chiều ngang
     public int gridHeight = 5;    // Số ô theo chiều dọc
-    public float hexSize = 1f;    // Kích thước ô hex
+    public float R = 1f;    // bán kính tính từ tâm đến đỉnh
     public List<HexagonItem> childs;
 
     public static bool IsEnd { get; internal set; }
 
 
-
     public void GenerateGridPointTop()
     {
-        float hexWidth = Mathf.Sqrt(3) * hexSize; // ≈ 1.732 * hexSize
-        float hexHeight = 2f * hexSize; // Hex cao hơn rộng
+        float hexWidth = Mathf.Sqrt(3) * R; // ≈ 1.732 * hexSize
+        float hexHeight = 2f * R; // Hex cao hơn rộng
 
         for (int q = 0; q < gridWidth; q++)
         {
@@ -51,8 +50,8 @@ public class HexagonMapDrawing : MonoBehaviour
 
     public void GenerateGridFlatTop()
     {
-        float hexWidth = hexSize * 2f;
-        float hexHeight = Mathf.Sqrt(3) * hexSize; // Cao hơn chiều rộng khi flat-top
+        float hexWidth = R * 2f;
+        float hexHeight = Mathf.Sqrt(3) * R; // Cao hơn chiều rộng khi flat-top
 
         for (int q = 0; q < gridWidth; q++)
         {

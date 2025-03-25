@@ -1,5 +1,8 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,9 +33,9 @@ public class HexagonMapEditor : Editor
         {
             script.InitChilds();
         }
-        if (GUILayout.Button("Show Event Child"))
+        if (GUILayout.Button("Gen Child Target"))
         {
-            SceneView.duringSceneGui += OnSceneGUI;
+            GenChildTarget();
         }
         if (GUILayout.Button("Save To File"))
         {
@@ -47,6 +50,26 @@ public class HexagonMapEditor : Editor
         }
     }
 
+    private void GenChildTarget()
+    {
+        float R = script.R;
+        foreach (var item in script.childs)
+        {
+            var neighbor = HexagonAstar.GetNeigbor(item.transform.position);
+            List<HexagonItem> cache = new();
+            foreach (var e in neighbor)
+            {
+                var obj = script.childs.Find(x => Vector3.Distance(x.transform.localPosition, e) <= R);
+                if (obj != null)
+                {
+                    cache.Add(obj);
+                }
+            }
+            item.targets = cache.ToArray();
+            item.gameObject.SetActive(false);
+        }
+    }
+
     private void SaveToFile()
     {
         string enter = "\n";
@@ -54,6 +77,7 @@ public class HexagonMapEditor : Editor
         line += $"childCount={script.childs.Count}" + enter;
         line += $"targetScore={script.targetScore}" + enter;
         line += $"itemStart={GetIndex(script.itemStart)}" + enter;
+        line += $"hexSize={script.R.ToString()}" + enter;
 
         //line += $"gridHeight={script.gridHeight}" + enter;
         for (int i = 0; i < script.childs.Count; i++)
@@ -78,20 +102,8 @@ public class HexagonMapEditor : Editor
 
     private int GetIndex(HexagonItem e)
     {
+        if (e == null)
+            return -1;
         return script.childs.FindIndex(x => x.gameObject.GetInstanceID() == e.gameObject.GetInstanceID());
-    }
-
-    private void OnSceneGUI(SceneView sceneView)
-    {
-        Handles.color = Color.red;
-
-        // Duyệt qua tất cả object trong Scene
-        foreach (var obj in script.childs)
-        {
-            Vector3 center = obj.transform.position;
-            Vector3 normal = Vector3.up;
-            Vector3 from = obj.transform.right;
-            Handles.DrawSolidArc(center, normal, from, 360, 0.2f);
-        }
     }
 }

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using DG.Tweening.Core;
+using DG.Tweening.Plugins.Core.PathCore;
 using DG.Tweening.Plugins.Options;
 using System;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class HexagonCharacterController : MonoBehaviour
     }
 
     bool isHurt = false;
-    private TweenerCore<Vector3, Vector3, VectorOptions> tweenMove;
+    private TweenerCore<Vector3, Path, PathOptions> tweenMove;
 
     private void OnScored(int score)
     {
@@ -58,9 +59,18 @@ public class HexagonCharacterController : MonoBehaviour
 
     public void SetTarget(Vector3 worldPosition)
     {
-        tweenMove.Kill();
-        tweenMove = transform.DOMove(worldPosition, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        var target = HexagonMain.Instance.GetLocalPosition(worldPosition);
+        var begin = HexagonMain.Instance.GetLocalPosition(transform.position);
+        var localpath = HexagonAstar.GetMovingPosition(HexagonMain.Instance.objChild, begin, target);
+        var worldPoint = new Vector3[localpath.Length];
+        for(int i = 0; i< worldPoint.Length; i++)
         {
+            worldPoint[i] = HexagonMain.Instance.GetWorldPosition(localpath[i]);
+        }
+        tweenMove.Kill();
+        tweenMove = transform.DOPath(worldPoint, 1f).SetEase(Ease.OutQuad).OnComplete(() =>
+        {
+            transform.position = worldPosition;
             if (isHurt)
             {
                 SetState(State.React);

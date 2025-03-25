@@ -2,6 +2,16 @@
 
 public partial class INIParser
 {
+    public float ReadValue(string SectionName, string Key, float DefaultValue)
+    {
+        string StringValue = ReadValue(SectionName, Key, DefaultValue.ToString());
+        float result = 0f;
+        if(float.TryParse(StringValue, out result))
+        {
+            return result;
+        }
+        return DefaultValue;
+    }
     public Vector3 ReadValue(string SectionName, string Key, Vector3 DefaultValue)
     {
         string StringValue = ReadValue(SectionName, Key, DefaultValue.ToString());

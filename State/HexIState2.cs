@@ -6,11 +6,28 @@ public class HexIState2 : AHexIState, IPointer
 {
     private GameObject effect;
 
-    public bool IsEnableClick { get; private set; }
+    public bool IsEnableClick { get; private set; } = false;
 
     public void Click()
     {
+        //foreach (var e in HexagonMain.Instance.Childs)
+        //{
+        //    if (e.State == HexagonItem.EState.Selection)
+        //    {
+        //        e.State = HexagonItem.EState.Hidden;
+        //    }
+        //}
+        foreach (var e in Data.targets)
+        {
+            if (e.State == HexagonItem.EState.Hidden)
+                e.State = HexagonItem.EState.Selection;
+        }
         HexagonMain.Instance.Current = Data;
+    }
+
+    void OnClick()
+    {
+
     }
 
     public override void OnStateOff()

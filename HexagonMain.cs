@@ -24,6 +24,9 @@ public class HexagonMain : MonoBehaviour
             OnChangePosition();
         }
     }
+    public List<HexagonItem> Childs => childs;
+    public List<GameObject> objChild;
+    public float HexSize => hexSize;
     public static bool IsEnd { get; internal set; }
     public static UnityAction<int> OnScored;
     public static UnityAction OnEnd;
@@ -42,6 +45,7 @@ public class HexagonMain : MonoBehaviour
     private int idStart;
     private HexagonCharacterController character;
     private HexagonItem current;
+    private float hexSize;
 
     private void Awake()
     {
@@ -118,6 +122,15 @@ public class HexagonMain : MonoBehaviour
         }
     }
 
+    public Vector3 GetLocalPosition(Vector3 world)
+    {
+        return transform.InverseTransformPoint(world);
+    }
+    public Vector3 GetWorldPosition(Vector3 local)
+    {
+        return transform.TransformPoint(local);
+    }
+
     private void GenMap()
     {
         idMap = PlayerPrefs.GetInt(SAVE_IDMAP, 0);
@@ -127,11 +140,13 @@ public class HexagonMain : MonoBehaviour
         childCount = data.ReadValue("MAP", "childCount", 0);
         targetScore = data.ReadValue("MAP", "targetScore", 0);
         idStart = data.ReadValue("MAP", "itemStart", 0);
+        hexSize = data.ReadValue("MAP", "hexSize", 0f);
         if (childCount == 0)
         {
             throw new NullReferenceException($"id map {idMap}");
         }
         childs = new List<HexagonItem>();
+        objChild = new List<GameObject>();
         for (int i = 0; i < childCount; i++)
         {
             var obj = Instantiate(prefab, transform);
@@ -140,6 +155,7 @@ public class HexagonMain : MonoBehaviour
             script.State = HexagonItem.EState.Hidden;
             script.score = data.ReadValue(i.ToString(), SCORE, 0);
             childs.Add(script);
+            objChild.Add(obj);
         }
 
         List<HexagonItem> result = new();
@@ -155,6 +171,8 @@ public class HexagonMain : MonoBehaviour
                 if (id != null && id.Length != 0)
                 {
                     cid = int.Parse(id);
+                    if (cid == -1)
+                        continue;
                     result.Add(childs[cid]);
                 }
             }
