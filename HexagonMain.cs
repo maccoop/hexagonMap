@@ -10,6 +10,8 @@ public class HexagonMain : MonoBehaviour
     private const string SCORE = "score";
     private const string POSITION = "position";
     private const string TARGET = "target";
+    private const int CHUNK_SIZE = 5;
+    private Dictionary<Vector2Int, List<Vector2Int>> chunks = new Dictionary<Vector2Int, List<Vector2Int>>();
 
     public static HexagonMain Instance { get; set; }
     public HexagonItem Current
@@ -24,6 +26,7 @@ public class HexagonMain : MonoBehaviour
             OnChangePosition();
         }
     }
+    private int currentGenPoint = 10;
     public List<HexagonItem> Childs => childs;
     public List<GameObject> objChild;
     public float HexSize => hexSize;
@@ -46,6 +49,7 @@ public class HexagonMain : MonoBehaviour
     private HexagonCharacterController character;
     private HexagonItem current;
     private float hexSize;
+    private int col, row;
 
     private void Awake()
     {
@@ -56,7 +60,9 @@ public class HexagonMain : MonoBehaviour
     {
         OnScored += OnEventScored;
         OnEnd += OnStageEnd;
-        GenMap();
+        GetData();
+        GenerateChunks();
+        GenMap(new Vector2Int(0,0));
         Reset();
     }
 
@@ -126,12 +132,13 @@ public class HexagonMain : MonoBehaviour
     {
         return transform.InverseTransformPoint(world);
     }
+
     public Vector3 GetWorldPosition(Vector3 local)
     {
         return transform.TransformPoint(local);
     }
 
-    private void GenMap()
+    private void GetData()
     {
         idMap = PlayerPrefs.GetInt(SAVE_IDMAP, 0);
         var asset = Resources.Load<TextAsset>($"MapData/map_{idMap}");
@@ -141,6 +148,40 @@ public class HexagonMain : MonoBehaviour
         targetScore = data.ReadValue("MAP", "targetScore", 0);
         idStart = data.ReadValue("MAP", "itemStart", 0);
         hexSize = data.ReadValue("MAP", "hexSize", 0f);
+        col = data.ReadValue("MAP", "col", 5);
+        row = data.ReadValue("MAP", "row", 5);
+    }
+
+    void GenerateChunks()
+    {
+        for (int x = 0; x < col; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                Vector2Int chunkPos = new Vector2Int(x / CHUNK_SIZE, y / CHUNK_SIZE);
+                Vector2Int cellPos = new Vector2Int(x, y);
+
+                if (!chunks.ContainsKey(chunkPos))
+                {
+                    chunks[chunkPos] = new List<Vector2Int>();
+                }
+
+                chunks[chunkPos].Add(cellPos);
+            }
+        }
+    }
+    Vector2Int GetChunk(Vector2Int chunkPos)
+    {
+        if (chunks.TryGetValue(chunkPos, out var cells))
+        {
+            return cells;
+        }
+        return null;
+    }
+
+
+    private void GenMap(Vector2Int pos)
+    {
         if (childCount == 0)
         {
             throw new NullReferenceException($"id map {idMap}");
