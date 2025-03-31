@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class HexagonItem : MonoBehaviour
 {
@@ -50,7 +48,6 @@ public class HexagonItem : MonoBehaviour
         Count
     }
 }
-
 public abstract class AHexIState : MonoBehaviour, IHexIState
 {
     private HexagonItem _data;
@@ -66,7 +63,6 @@ public abstract class AHexIState : MonoBehaviour, IHexIState
     public abstract void OnStateOn();
     public abstract void Reset();
 }
-
 public interface IHexIState
 {
     public void OnStateOn();

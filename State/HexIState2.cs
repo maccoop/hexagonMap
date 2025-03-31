@@ -2,11 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HexIState2 : AHexIState, IPointer
+public class HexIState2 : AHexIState
 {
     private GameObject effect;
-
-    public bool IsEnableClick { get; private set; } = false;
 
     public void Click()
     {
@@ -40,21 +38,7 @@ public class HexIState2 : AHexIState, IPointer
         GenEffect(Data.score, transform.position);
         gameObject.SetActive(true);
         gameObject.transform.localScale = Vector3.one;
-        if (HexagonMain.IsEnd)
-        {
-            return;
-        }
-        if (Data.targets.Length == 0)
-        {
-            HexagonMain.OnEnd?.Invoke();
-        }
-        foreach (var e in Data.targets)
-        {
-            if (e.State == HexagonItem.EState.Hidden)
-                e.State = HexagonItem.EState.Selection;
-        }
         HexagonMain.Instance.Current = Data;
-        IsEnableClick = true;
     }
 
     public override void Reset()

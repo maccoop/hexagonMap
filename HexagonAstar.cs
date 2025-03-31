@@ -63,7 +63,6 @@ public class HexagonAstar
         Debug.Log("End a*: " + System.DateTime.Now.ToString("ss.fff"));
         return currentPhase.vectors.ToArray();
     }
-
     private static void Sort()
     {
         for (int i = 0; i < cache.Count - 1; i++)
@@ -79,7 +78,6 @@ public class HexagonAstar
             }
         }
     }
-
     public static Vector3[] GetNeigbor(Vector3 point)
     {
         Vector3[] result = new Vector3[6];

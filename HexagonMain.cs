@@ -62,8 +62,8 @@ public class HexagonMain : MonoBehaviour
         OnEnd += OnStageEnd;
         GetData();
         GenerateChunks();
-        GenMap(new Vector2Int(0,0));
-        Reset();
+        GenMap(new Vector2Int(0, 0));
+        Begin();
     }
 
     private void OnStageEnd()
@@ -98,16 +98,27 @@ public class HexagonMain : MonoBehaviour
         }
     }
 
-    public void Reset()
+
+    private void Begin()
     {
-        crrscore = 0;
         detail.text = $"{crrscore}/{targetScore}";
         IsEnd = false;
         foreach (var e in childs)
         {
             e.State = HexagonItem.EState.Hidden;
         }
-        itemStart.State = HexagonItem.EState.Selection;
+        itemStart.State = HexagonItem.EState.Selected;
+    }
+    public void Reset()
+    {
+        detail.text = $"{crrscore}/{targetScore}";
+        IsEnd = false;
+        foreach (var e in childs)
+        {
+            e.State = HexagonItem.EState.Hidden;
+        }
+        itemStart.State = HexagonItem.EState.Selected;
+        crrscore = 0;
         if (character != null)
             Destroy(character.gameObject);
         character = null;
@@ -169,14 +180,6 @@ public class HexagonMain : MonoBehaviour
                 chunks[chunkPos].Add(cellPos);
             }
         }
-    }
-    Vector2Int GetChunk(Vector2Int chunkPos)
-    {
-        if (chunks.TryGetValue(chunkPos, out var cells))
-        {
-            return cells;
-        }
-        return null;
     }
 
 

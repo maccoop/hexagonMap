@@ -66,7 +66,6 @@ public class HexagonMapEditor : Editor
                 }
             }
             item.targets = cache.ToArray();
-            item.gameObject.SetActive(false);
         }
     }
 

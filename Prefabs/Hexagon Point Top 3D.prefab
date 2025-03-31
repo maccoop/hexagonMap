@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6195253868766569516}
   m_Layer: 0
   m_Name: Hexagon Point Top 3D
-  m_TagString: Untagged
+  m_TagString: cell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afd89ba87f240504aa23ba021686dd0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _state: 0
   score: 0
   targets: []
 --- !u!135 &6195253868766569516
@@ -118,9 +119,9 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.45
+  m_Radius: 0.44
   m_Center: {x: 0, y: 0, z: 0}

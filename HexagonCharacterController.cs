@@ -15,7 +15,27 @@ public class HexagonCharacterController : MonoBehaviour
 
     public Animator animator;
     public string[] clips;
+    public float speed;
     private State _state;
+    float _h = 0f;
+    float _v = 0f;
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        _h = Input.GetAxis("Horizontal");
+        _v = Input.GetAxis("Vertical");
+        transform.position = Vector3.MoveTowards(transform.position, transform.position + new Vector3(_h, _v), speed* Time.deltaTime);
+        if(_h != 0 || _v != 0)
+        {
+            SetState(State.Move);
+        }
+        else
+        {
+            SetState(State.Idle);
+        }
+    }
 
     private void Start()
     {
